@@ -109,10 +109,11 @@ class UpdateNote:
     def __init__(self, session: AsyncSession) -> None:
         self.async_session = session
 
-    async def execute(self, user_id, note_id, request: UpdateNotesRequest) -> NotesSchema:
+    async def execute(self, user_id: int, note_id: int, request: UpdateNotesRequest) -> NotesSchema:
         async with self.async_session.begin() as session:
             notes = await session.execute(
-                (Notes.note_id == note_id).__and__(Notes.created_by == user_id).__and__(Notes.deleted_at == None)
+                select(Notes).where(
+                    (Notes.note_id == note_id) & (Notes.created_by == user_id) & (Notes.deleted_at == None))
             )
             notes = notes.scalars().first()
             if not notes:
@@ -134,8 +135,9 @@ class DeleteNote:
     async def execute(self, user_id, note_id) -> NotesSchema:
         async with self.async_session.begin() as session:
             notes = await session.execute(
-                    (Notes.note_id == note_id).__and__(Notes.created_by == user_id).__and__(Notes.deleted_at == None)
-                )
+                select(Notes).where(
+                    (Notes.note_id == note_id) & (Notes.created_by == user_id) & (Notes.deleted_at == None))
+            )
             notes = notes.scalars().first()
             if not notes:
                 raise HTTPException(status_code=404)

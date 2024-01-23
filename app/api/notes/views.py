@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Path, Request, Response, HTTPException
-from api.base.base_schemas import BaseResponse, PaginationParams
+from api.base.base_schemas import PaginationParams
 from middlewares.authentication import (
     get_user_id_from_access_token,
 )
